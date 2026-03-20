@@ -1,46 +1,59 @@
+'use client';
+
 import React from 'react';
+import { useProcurement } from '@/hooks/useProcurement';
 import { Card } from '@/components/Card';
 import { Badge } from '@/components/Badge';
 
 export default function PaymentsPage() {
+  const { projects, milestones, updateMilestoneStatus } = useProcurement();
+
+  const getProjectName = (id: string) => projects.find(p => p.id === id)?.name || 'Unknown Project';
+  const approvedMilestones = milestones.filter(m => m.status === 'Approved');
+
+  const handleRelease = (id: string) => {
+    updateMilestoneStatus(id, 'Paid');
+    alert('Payment Released Successfully!');
+  };
+
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      <h1 className="text-2xl font-semibold text-slate-900">Payments Ledger</h1>
+    <div className="max-w-5xl mx-auto space-y-6 pb-20">
+      <h1 className="text-2xl font-semibold text-white">Payments Ledger</h1>
       
-      <Card>
+      <Card className="bg-[#1c1c1f] border-gray-800 p-6 rounded-3xl">
+        <h3 className="text-lg font-medium text-white mb-6">Approved Milestones Awaiting Payment</h3>
+        
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200">
+          <table className="min-w-full divide-y divide-[#2c2c2f]">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Transaction ID</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Project</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Amount</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Milestone</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-slate-200">
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#TXN-8930</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">City Bridge</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">$250,000</td>
-                <td className="px-6 py-4 whitespace-nowrap"><Badge status="Paid" /></td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Mar 15, 2026</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#TXN-8931</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Highway 61</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">$45,000</td>
-                <td className="px-6 py-4 whitespace-nowrap"><Badge status="Pending" /></td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Mar 19, 2026</td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900">#TXN-8932</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Public Library</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900 font-medium">$12,000</td>
-                <td className="px-6 py-4 whitespace-nowrap"><Badge status="Approved" /></td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">Mar 20, 2026</td>
-              </tr>
+            <tbody className="divide-y divide-[#2c2c2f]">
+              {approvedMilestones.length === 0 && (
+                <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No approved milestones await payment.</td></tr>
+              )}
+              {approvedMilestones.map(m => (
+                <tr key={m.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{m.title}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">{getProjectName(m.projectId)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-green-400 font-medium">₹{m.amount.toLocaleString('en-IN')}</td>
+                  <td className="px-6 py-4 whitespace-nowrap"><Badge status={m.status} /></td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right">
+                    <button 
+                      onClick={() => handleRelease(m.id)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-md font-medium text-xs hover:bg-blue-700 transition"
+                    >
+                      Release Payment
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
