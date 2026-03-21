@@ -7,7 +7,7 @@ import { ethers } from 'ethers';
 
 interface ProcurementContextType {
   role: UserRole;
-  login: (r: UserRole) => void;
+  login: (r: UserRole, p?: Partial<UserProfile>) => void;
   logout: () => void;
   projects: Project[];
   milestones: Milestone[];
@@ -75,14 +75,21 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => { localStorage.setItem('nexus_logs', JSON.stringify(logs)); }, [logs]);
   useEffect(() => { if (role) localStorage.setItem('nexus_role', role); }, [role]);
 
-  const login = (r: UserRole) => {
+  const login = (r: UserRole, p?: Partial<UserProfile>) => {
     setRole(r);
-    localStorage.setItem('nexus_role', r as string);
+    if (r) {
+      localStorage.setItem('nexus_role', r as string);
+    }
+    if (p) {
+      setProfile(prev => ({ ...prev, ...p }));
+      localStorage.setItem('nexus_profile', JSON.stringify({ ...profile, ...p }));
+    }
   };
 
   const logout = () => {
     setRole(null);
     localStorage.removeItem('nexus_role');
+    localStorage.removeItem('nexus_token');
   };
 
   const notify = (msg: string) => {

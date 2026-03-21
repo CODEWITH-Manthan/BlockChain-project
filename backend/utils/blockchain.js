@@ -2,7 +2,12 @@ const { ethers } = require("ethers");
 require("dotenv").config();
 
 // Contract ABI - Add full ABI inside this array or require it from artifacts
-const CONTRACT_ABI = require("../../artifacts/contracts/Procurement.sol/Procurement.json").abi;
+let CONTRACT_ABI = [];
+try {
+  CONTRACT_ABI = require("../../artifacts/contracts/Procurement.sol/Procurement.json").abi;
+} catch (error) {
+  console.log("Warning: Procurement ABI not found. Hardhat contracts may not be compiled.");
+}
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS || "0x0000000000000000000000000000000000000000"; // Replace with deployed address
 
 let contract, wallet, provider;

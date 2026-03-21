@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const contractRoutes = require("./routes/contractRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 app.use(cors());
@@ -11,7 +12,8 @@ app.get("/", (req, res) => {
   res.send("API Running for Blockchain Procurement System");
 });
 
-// Use contract routes
+// Use routes
+app.use("/api/auth", authRoutes);
 app.use("/api/contract", contractRoutes);
 
 const PORT = process.env.PORT || 5000;

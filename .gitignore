@@ -39,3 +39,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+blockchain/node_modules
+
+# Hardhat artifacts
+blockchain/artifacts/
+blockchain/cache/
+
+# Local Backend Data (Mock Database)
+backend/users.json

@@ -29,18 +29,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="flex h-screen overflow-hidden bg-[#151518] text-white font-sans antialiased">
+      <body className="flex h-screen overflow-hidden bg-[#0d0d0f] text-white font-sans antialiased">
         <ProcurementProvider>
-          <RoleGuard>
-            <ToastOverlay />
-            <Sidebar />
-            <div className="flex flex-col flex-1 min-w-0 ml-[88px] h-full">
-              <Navbar />
-              <main className="flex-1 overflow-y-auto px-8 py-4">
-                {children}
-              </main>
-            </div>
-          </RoleGuard>
+          <ToastOverlay />
+          {children}
         </ProcurementProvider>
       </body>
     </html>
