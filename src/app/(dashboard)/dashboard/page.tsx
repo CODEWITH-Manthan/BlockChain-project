@@ -22,6 +22,10 @@ export default function DashboardPage() {
   const totalBudget = userProjects.reduce((acc, p) => acc + p.budget, 0);
   const completedMilestones = userMilestones.filter(m => m.status === 'Paid' || m.status === 'Approved').length;
   const pendingPaymentsAmount = userMilestones.filter(m => m.status === 'Approved').reduce((acc, m) => acc + m.amount, 0);
+  const receivedPaymentsAmount = userMilestones.filter(m => m.status === 'Paid').reduce((acc, m) => acc + m.amount, 0);
+
+  const displayAmount = role === 'CONTRACTOR' ? receivedPaymentsAmount : pendingPaymentsAmount;
+  const displayLabel = role === 'CONTRACTOR' ? 'Payments Received' : 'Pending Payments';
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20 animate-in fade-in duration-500">
@@ -64,12 +68,12 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="bg-[#1c1c1f] border-[#2c2c2f] flex items-center p-6 rounded-3xl hover:border-gray-700 transition-colors">
-          <div className="bg-orange-500/10 p-4 rounded-2xl mr-4 border border-orange-500/20">
-            <Clock className="text-orange-400" size={24} />
+          <div className={`p-4 rounded-2xl mr-4 border ${role === 'CONTRACTOR' ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-orange-500/10 border-orange-500/20'}`}>
+            {role === 'CONTRACTOR' ? <DollarSign className="text-emerald-400" size={24} /> : <Clock className="text-orange-400" size={24} />}
           </div>
           <div>
-            <p className="text-sm text-gray-400 font-medium">Pending Payments</p>
-            <p className="text-3xl font-bold text-white tracking-tight">₹{pendingPaymentsAmount.toLocaleString('en-IN')}</p>
+            <p className="text-sm text-gray-400 font-medium">{displayLabel}</p>
+            <p className="text-3xl font-bold text-white tracking-tight">₹{displayAmount.toLocaleString('en-IN')}</p>
           </div>
         </Card>
       </div>

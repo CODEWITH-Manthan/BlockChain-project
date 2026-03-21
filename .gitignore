@@ -47,4 +47,20 @@ blockchain/artifacts/
 blockchain/cache/
 
 # Local Backend Data (Mock Database)
-backend/users.json
+backend/users.json
+backend/node_modules/
+
+# Hardhat Generated Types & Deployments
+blockchain/typechain-types/
+blockchain/typechain/
+blockchain/ignition/deployments/
+
+# Editor & OS Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Linting and Global Logs
+.eslintcache
+*.log

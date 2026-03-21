@@ -2,7 +2,7 @@
 
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import { Project, Milestone, MilestoneStatus, Invoice, UserProfile, AppNotification, Order, OrderStatus, ActionLog, UserRole } from '../types';
-import { approveOnChain, releasePaymentOnChain } from '../utils/blockchain';
+import { approveOnChain, releasePaymentOnChain, createProjectOnChain, allocateBudgetOnChain } from '../utils/blockchain';
 import { ethers } from 'ethers';
 
 interface ProcurementContextType {
@@ -103,7 +103,25 @@ export const ProcurementProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const addProject = async (p: Project) => { 
     setProjects(prev => [...prev, p]); 
     notify(`Executing: createProject("${p.name}", ${p.budget})`);
-    addLog(`Smart Contract: createProject Initialized`, p.documentHash);
+    
+    try {
+      const budgetInWei = ethers.parseEther(p.budget.toString());
+      
+      notify(`Syncing "${p.name}" genesis to blockchain...`);
+      const txHashCreate = await createProjectOnChain(p.name, budgetInWei, p.contractor, p.documentHash);
+      notify(`Project perfectly registered on-chain! TX: ${txHashCreate.substring(0, 10)}...`);
+      addLog(`Smart Contract: createProject Initialized`, txHashCreate);
+
+      notify(`Executing: allocateEscrowVault("${p.id}", ${p.budget})`);
+      const txHashEscrow = await allocateBudgetOnChain(p.id, budgetInWei);
+      notify(`Ledger Vault Locked for ₹${p.budget.toLocaleString()}! TX: ${txHashEscrow.substring(0, 10)}...`);
+      addLog(`Escrow Vault Allocated: ₹${p.budget.toLocaleString()}`, txHashEscrow);
+
+    } catch (err: any) {
+       console.error(err);
+       notify(`Blockchain disconnected. Fallback to local mock vault.`);
+       addLog(`Smart Contract: createProject Initialized (Mock Fallback)`, p.documentHash);
+    }
   };
   
   const addMilestone = async (m: Milestone) => {
