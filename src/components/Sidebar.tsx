@@ -26,8 +26,8 @@ export function Sidebar() {
   const { role, logout } = useProcurement();
 
   const visibleItems = navItems.filter(item => {
-    if (role === 'ADMIN') return true;
-    if (role === 'CONTRACTOR' && ['/dashboard', '/upload-invoice'].includes(item.href)) return true;
+    if (role === 'ADMIN' && item.href !== '/upload-invoice') return true;
+    if (role === 'CONTRACTOR' && ['/dashboard', '/upload-invoice', '/milestones'].includes(item.href)) return true;
     if (role === 'REGULATOR' && ['/dashboard', '/audit'].includes(item.href)) return true;
     return false;
   });
@@ -64,7 +64,7 @@ export function Sidebar() {
               <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
               {/* Tooltip */}
               <span className="absolute left-full ml-3 whitespace-nowrap text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                {item.label}
+                {item.href === '/milestones' && role === 'CONTRACTOR' ? 'Project Roadmap' : item.label}
               </span>
             </Link>
           );

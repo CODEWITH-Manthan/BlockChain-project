@@ -6,11 +6,22 @@ import { ActivityLog } from '@/components/ActivityLog';
 import { Briefcase, DollarSign, CheckCircle, Clock } from 'lucide-react';
 
 export default function DashboardPage() {
-  const { projects, milestones, profile } = useProcurement();
+  const { projects, milestones, profile, role } = useProcurement();
 
-  const totalBudget = projects.reduce((acc, p) => acc + p.budget, 0);
-  const completedMilestones = milestones.filter(m => m.status === 'Paid' || m.status === 'Approved').length;
-  const pendingPaymentsAmount = milestones.filter(m => m.status === 'Approved').reduce((acc, m) => acc + m.amount, 0);
+  const userProjects = role === 'ADMIN' 
+    ? projects 
+    : projects.filter(p => {
+        const c = p.contractor?.toLowerCase().replace(/\s+/g, '') || '';
+        const n = profile?.name?.toLowerCase().replace(/\s+/g, '') || '';
+        return c === n || c.includes(n) || n.includes(c);
+      });
+
+  const userProjectIds = userProjects.map(p => p.id);
+  const userMilestones = milestones.filter(m => userProjectIds.includes(m.projectId));
+
+  const totalBudget = userProjects.reduce((acc, p) => acc + p.budget, 0);
+  const completedMilestones = userMilestones.filter(m => m.status === 'Paid' || m.status === 'Approved').length;
+  const pendingPaymentsAmount = userMilestones.filter(m => m.status === 'Approved').reduce((acc, m) => acc + m.amount, 0);
 
   return (
     <div className="max-w-7xl mx-auto space-y-6 pb-20 animate-in fade-in duration-500">
@@ -28,7 +39,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-sm text-gray-400 font-medium">Total Projects</p>
-            <p className="text-3xl font-bold text-white tracking-tight">{projects.length}</p>
+            <p className="text-3xl font-bold text-white tracking-tight">{userProjects.length}</p>
           </div>
         </Card>
 
@@ -67,15 +78,23 @@ export default function DashboardPage() {
         <div className="lg:col-span-2">
           <div className="bg-[#1c1c1f] rounded-3xl p-6 border border-[#2c2c2f] h-full">
             <h2 className="text-lg font-medium text-white mb-6">Recent Projects</h2>
-            {projects.length === 0 ? (
-              <p className="text-gray-500 text-sm">No projects created yet. Use the Create Project page.</p>
+            {userProjects.length === 0 ? (
+              <p className="text-gray-500 text-sm">No projects assigned yet.</p>
             ) : (
               <ul className="space-y-4">
-                {[...projects].reverse().slice(0, 5).map(p => (
+                {[...userProjects].reverse().slice(0, 5).map(p => (
                   <li key={p.id} className="bg-[#151518] border border-[#2c2c2f] p-5 rounded-2xl flex justify-between items-center hover:border-gray-700 transition-colors">
                     <div>
                       <p className="text-white font-medium text-lg">{p.name}</p>
-                      <p className="text-gray-500 text-xs mt-1">Contractor: <span className="text-gray-400">{p.contractor}</span></p>
+                      <div className="flex items-center space-x-3 mt-1.5">
+                        <p className="text-gray-500 text-xs">Contractor: <span className="text-gray-400">{p.contractor}</span></p>
+                        {p.location && (
+                          <>
+                            <span className="text-gray-600 text-[10px]">•</span>
+                            <p className="text-gray-500 text-xs">Location: <span className="text-gray-400">{p.location}</span></p>
+                          </>
+                        )}
+                      </div>
                     </div>
                     <div className="text-right">
                       <p className="text-green-400 font-bold bg-green-500/10 px-4 py-2 rounded-xl">₹{p.budget.toLocaleString('en-IN')}</p>

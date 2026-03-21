@@ -7,7 +7,7 @@ import { ActivityLog } from '@/components/ActivityLog';
 import { CreditCard, ShieldCheck, LockKeyhole, FileKey2 } from 'lucide-react';
 
 export default function PaymentsPage() {
-  const { projects, milestones, updateMilestoneStatus } = useProcurement();
+  const { projects, milestones, updateMilestoneStatus, role } = useProcurement();
   const [verifyingId, setVerifyingId] = useState<string | null>(null);
   const [inputHash, setInputHash] = useState('');
   const [error, setError] = useState('');
@@ -62,21 +62,23 @@ export default function PaymentsPage() {
                       </div>
                       <div className="flex items-center space-x-6">
                         <span className="text-2xl font-bold text-white tracking-tight">₹{m.amount.toLocaleString()}</span>
-                        {verifyingId !== m.id ? (
-                          <button 
-                            onClick={() => { setVerifyingId(m.id); setInputHash(''); setError(''); }}
-                            className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-3 rounded-xl transition-all shadow-lg shadow-purple-900/20 active:scale-95"
-                          >
-                            <CreditCard size={18} />
-                            <span>Release Funds</span>
-                          </button>
-                        ) : (
-                          <button 
-                            onClick={() => { setVerifyingId(null); setError(''); setInputHash(''); }}
-                            className="text-gray-400 hover:text-white text-sm font-medium px-3 py-2 transition-colors"
-                          >
-                            Cancel
-                          </button>
+                        {role === 'ADMIN' && (
+                          verifyingId !== m.id ? (
+                            <button 
+                              onClick={() => { setVerifyingId(m.id); setInputHash(''); setError(''); }}
+                              className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium px-5 py-3 rounded-xl transition-all shadow-lg shadow-purple-900/20 active:scale-95"
+                            >
+                              <CreditCard size={18} />
+                              <span>Release Funds</span>
+                            </button>
+                          ) : (
+                            <button 
+                              onClick={() => { setVerifyingId(null); setError(''); setInputHash(''); }}
+                              className="text-gray-400 hover:text-white text-sm font-medium px-3 py-2 transition-colors"
+                            >
+                              Cancel
+                            </button>
+                          )
                         )}
                       </div>
                     </div>

@@ -9,7 +9,7 @@ import { PlusSquare, CheckCircle, FileText, UploadCloud } from 'lucide-react';
 export default function CreateProjectPage() {
   const router = useRouter();
   const { addProject } = useProcurement();
-  const [formData, setFormData] = useState({ name: '', budget: '', contractor: '' });
+  const [formData, setFormData] = useState({ name: '', budget: '', contractor: '', location: '' });
   const [file, setFile] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
@@ -24,12 +24,13 @@ export default function CreateProjectPage() {
       name: formData.name,
       budget: Number(formData.budget),
       contractor: formData.contractor,
+      location: formData.location,
       documentHash: docHash
     });
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
-      setFormData({ name: '', budget: '', contractor: '' });
+      setFormData({ name: '', budget: '', contractor: '', location: '' });
       setFile(null);
       router.push('/milestones');
     }, 2000);
@@ -74,15 +75,30 @@ export default function CreateProjectPage() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1.5">Contractor Details</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5">Project Location</label>
+              <input 
+                required
+                type="text" 
+                value={formData.location}
+                onChange={e => setFormData({...formData, location: e.target.value})}
+                className="w-full bg-[#151518] border border-[#333336] rounded-xl px-4 py-2.5 text-sm text-white focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="e.g. Sector 4, Downtown"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1.5 flex items-center justify-between">
+                <span>Contractor Details</span>
+                <span className="text-xs text-blue-400 font-normal">Must match contractor's username</span>
+              </label>
               <input 
                 required
                 type="text" 
                 value={formData.contractor}
                 onChange={e => setFormData({...formData, contractor: e.target.value})}
                 className="w-full bg-[#151518] border border-[#333336] rounded-xl px-4 py-2.5 text-sm text-white focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                placeholder="Contractor Name or Address"
+                placeholder="e.g. anupnautiyal"
               />
+              <p className="text-xs text-gray-500 mt-1.5">Enter the exact name the contractor used to register so their dashboard links automatically.</p>
             </div>
             
             <div>

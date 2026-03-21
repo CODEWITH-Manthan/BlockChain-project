@@ -4,7 +4,7 @@ import { Card } from '@/components/Card';
 import { Activity, ExternalLink } from 'lucide-react';
 
 export function ActivityLog() {
-  const { logs } = useProcurement();
+  const { logs, role } = useProcurement();
 
   return (
     <Card className="bg-[#1c1c1f] border-[#2c2c2f] p-6 rounded-3xl sticky top-6">
@@ -31,7 +31,7 @@ export function ActivityLog() {
               
               <p className="text-sm text-gray-300 font-medium leading-relaxed">{log.message}</p>
               
-              {log.hash && (
+              {log.hash && role === 'ADMIN' && (
                 <div className="mt-2 inline-flex items-center space-x-2 bg-[#151518] border border-[#333336] rounded px-2 py-1">
                   <span className="text-xs font-mono text-purple-400 truncate max-w-[150px]">
                     Hash: {log.hash}

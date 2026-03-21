@@ -8,7 +8,7 @@ import { FileText, CheckCircle, UploadCloud, ShieldCheck, ExternalLink, AlertCir
 
 export default function UploadInvoicePage() {
   const router = useRouter();
-  const { projects, milestones, addInvoice } = useProcurement();
+  const { projects, milestones, addInvoice, role } = useProcurement();
   const [formData, setFormData] = useState({ milestoneId: '', amount: '', type: 'Invoice' as const });
   const [file, setFile] = useState<File | null>(null);
   const [submitted, setSubmitted] = useState(false);
@@ -95,12 +95,14 @@ export default function UploadInvoicePage() {
             <div className="w-full bg-[#151518] border border-gray-800 rounded-2xl p-6 space-y-4 mb-8 relative">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-50"></div>
               
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Blockchain Hash</p>
-                <p className="text-purple-400 font-mono text-sm break-all font-medium py-2 px-3 bg-purple-900/10 rounded-lg border border-purple-500/20">
-                  Hash: {mockHash}
-                </p>
-              </div>
+              {role === 'ADMIN' && (
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-widest font-semibold mb-1">Blockchain Hash</p>
+                  <p className="text-purple-400 font-mono text-sm break-all font-medium py-2 px-3 bg-purple-900/10 rounded-lg border border-purple-500/20">
+                    Hash: {mockHash}
+                  </p>
+                </div>
+              )}
 
               <div className="flex justify-between items-center text-sm border-t border-gray-800 pt-4">
                 <div>

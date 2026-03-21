@@ -3,6 +3,7 @@ export interface Project {
   name: string;
   budget: number;
   contractor: string;
+  location?: string;
   documentHash?: string;
 }
 
