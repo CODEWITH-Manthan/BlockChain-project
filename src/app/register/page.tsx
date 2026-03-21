@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useProcurement } from '@/context/ProcurementContext';
-import { Shield, Mail, Lock, User, Briefcase, FileBadge2 } from 'lucide-react';
+import { Shield, Mail, Lock, User, Briefcase, FileBadge2, Wallet } from 'lucide-react';
 import Link from 'next/link';
+import { connectWallet } from '@/utils/blockchain';
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,6 +23,16 @@ export default function RegisterPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleConnectWallet = async () => {
+    setError('');
+    try {
+      const wallet = await connectWallet();
+      setFormData(prev => ({ ...prev, wallet }));
+    } catch (err: any) {
+      setError(err.message);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -51,10 +62,14 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="w-full flex-1 min-h-[85vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-in fade-in duration-700">
+    <div className="w-full flex-1 min-h-[85vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-fade-in">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center p-4 bg-purple-500/10 rounded-full mb-4 ring-1 ring-purple-500/20">
-          <Shield className="h-10 w-10 text-purple-500" />
+        <div className="flex justify-center mb-6">
+          <img 
+            src="/assets/logo.png" 
+            alt="Aphelion Logo" 
+            className="h-24 w-auto object-contain brightness-110 contrast-125 logo-mask drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]" 
+          />
         </div>
         <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">Join Aphelion Cluster</h2>
         <p className="mt-2 text-sm text-gray-400">
@@ -143,20 +158,30 @@ export default function RegisterPage() {
               <label htmlFor="wallet" className="block text-sm font-medium text-gray-300">
                 Wallet Address <span className="text-gray-500 text-xs">(Optional for now)</span>
               </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FileBadge2 className="h-5 w-5 text-gray-500" />
+                <div className="flex space-x-2">
+                  <div className="relative flex-1 rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FileBadge2 className="h-5 w-5 text-gray-500" />
+                    </div>
+                    <input
+                      id="wallet"
+                      name="wallet"
+                      type="text"
+                      value={formData.wallet}
+                      onChange={handleChange}
+                      className="block w-full pl-10 pr-3 py-3 border border-[#333336] rounded-xl bg-[#151518] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                      placeholder="0x..."
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleConnectWallet}
+                    className="flex items-center justify-center px-4 border border-[#333336] rounded-xl bg-[#151518] text-gray-400 hover:text-white hover:bg-[#222225] transition-all"
+                    title="Connect MetaMask"
+                  >
+                    <Wallet className="h-5 w-5" />
+                  </button>
                 </div>
-                <input
-                  id="wallet"
-                  name="wallet"
-                  type="text"
-                  value={formData.wallet}
-                  onChange={handleChange}
-                  className="block w-full pl-10 pr-3 py-3 border border-[#333336] rounded-xl bg-[#151518] text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="0x..."
-                />
-              </div>
             </div>
 
             <div>

@@ -32,7 +32,9 @@ export default function RootLayout({
       <body className="flex h-screen overflow-hidden bg-[#0d0d0f] text-white font-sans antialiased">
         <ProcurementProvider>
           <ToastOverlay />
-          {children}
+          <div className="flex-1 flex flex-col h-full animate-fade-in">
+            {children}
+          </div>
         </ProcurementProvider>
       </body>
     </html>

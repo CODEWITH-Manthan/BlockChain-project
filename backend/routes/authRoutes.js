@@ -116,6 +116,49 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// @route POST /api/auth/wallet-login
+router.post('/wallet-login', async (req, res) => {
+  try {
+    const { wallet } = req.body;
+
+    if (!wallet) {
+      return res.status(400).json({ error: 'Please provide a wallet address' });
+    }
+
+    const users = readUsers();
+    // Case-insensitive search
+    const user = users.find(u => u.wallet && u.wallet.toLowerCase() === wallet.toLowerCase());
+
+    if (!user) {
+      return res.status(401).json({ error: 'No account associated with this wallet. Please register first.' });
+    }
+
+    const payload = {
+      user: {
+        id: user.id,
+        role: user.role
+      }
+    };
+
+    jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' }, (err, token) => {
+      if (err) throw err;
+      res.json({
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          wallet: user.wallet
+        }
+      });
+    });
+  } catch (error) {
+    console.error('Wallet login error', error);
+    res.status(500).json({ error: 'Server error during wallet login' });
+  }
+});
+
 // @route GET /api/auth/me
 router.get('/me', authMiddleware, async (req, res) => {
   try {

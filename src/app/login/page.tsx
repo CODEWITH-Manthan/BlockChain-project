@@ -6,6 +6,7 @@ import { useProcurement } from '@/context/ProcurementContext';
 import { Shield, Mail, Lock } from 'lucide-react';
 import Link from 'next/link';
 import { UserRole } from '@/types';
+import { connectWallet } from '@/utils/blockchain';
 
 function LoginForm() {
   const router = useRouter();
@@ -60,11 +61,43 @@ function LoginForm() {
     }
   };
 
+  const handleMetaMaskConnect = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      const wallet = await connectWallet();
+      
+      const res = await fetch('http://localhost:5000/api/auth/wallet-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Wallet login failed');
+      }
+
+      localStorage.setItem('nexus_token', data.token);
+      login(data.user.role as UserRole, data.user);
+      router.push('/dashboard');
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        <div className="inline-flex items-center justify-center p-4 bg-purple-500/10 rounded-full mb-4 ring-1 ring-purple-500/20">
-          <Shield className="h-10 w-10 text-purple-500" />
+        <div className="flex justify-center mb-6">
+          <img 
+            src="/assets/logo.png" 
+            alt="Aphelion Logo" 
+            className="h-24 w-auto object-contain brightness-110 contrast-125 logo-mask drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]" 
+          />
         </div>
         <h2 className="mt-2 text-3xl font-bold tracking-tight text-white">Sign in to Aphelion</h2>
         <p className="mt-2 text-sm text-gray-400">
@@ -178,7 +211,9 @@ function LoginForm() {
               <div>
                 <button
                   type="button"
-                  className="w-full flex justify-center items-center py-3 px-4 border border-[#333336] rounded-xl shadow-sm bg-[#151518] text-sm font-medium text-gray-300 hover:bg-[#222225] transition-colors"
+                  onClick={handleMetaMaskConnect}
+                  disabled={loading}
+                  className="w-full flex justify-center items-center py-3 px-4 border border-[#333336] rounded-xl shadow-sm bg-[#151518] text-sm font-medium text-gray-300 hover:bg-[#222225] transition-colors disabled:opacity-50"
                 >
                   <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg" alt="MetaMask" className="h-5 w-5 mr-2" />
                   MetaMask
@@ -202,7 +237,7 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="w-full flex-1 min-h-[85vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-in fade-in duration-700">
+    <div className="w-full flex-1 min-h-[85vh] flex flex-col justify-center py-12 sm:px-6 lg:px-8 animate-fade-in">
       <Suspense fallback={<div className="text-center text-purple-400 mt-20">Loading...</div>}>
         <LoginForm />
       </Suspense>

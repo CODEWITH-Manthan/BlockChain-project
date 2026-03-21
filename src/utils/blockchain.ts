@@ -78,3 +78,19 @@ export async function releasePaymentOnChain(index: number) {
   await tx.wait();
   return tx.hash;
 }
+
+export async function connectWallet() {
+  if (typeof window !== 'undefined' && (window as any).ethereum) {
+    try {
+      const accounts = await (window as any).ethereum.request({ 
+        method: 'eth_requestAccounts' 
+      });
+      return accounts[0];
+    } catch (error) {
+      console.error("User denied account access", error);
+      throw error;
+    }
+  } else {
+    throw new Error("No MetaMask detected. Please install MetaMask.");
+  }
+}

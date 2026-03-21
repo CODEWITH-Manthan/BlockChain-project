@@ -45,8 +45,12 @@ export function Sidebar() {
     <aside className="w-[88px] bg-[#151518] border-r border-[#222225] h-screen flex-shrink-0 flex flex-col items-center py-6 fixed inset-y-0 left-0 z-50">
       {/* Logo */}
       <div className="mb-8 relative w-full flex justify-center">
-        <Link href="/" className="text-white hover:opacity-80 transition-opacity">
-          <Aperture size={32} />
+        <Link href="/" className="hover:opacity-80 transition-opacity">
+          <img 
+            src="/assets/logo.png" 
+            alt="Aphelion" 
+            className="h-12 w-12 object-contain brightness-110 contrast-125 logo-mask drop-shadow-[0_0_8px_rgba(168,85,247,0.4)]" 
+          />
         </Link>
       </div>
 
