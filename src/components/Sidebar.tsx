@@ -2,27 +2,35 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useProcurement } from '@/context/ProcurementContext';
 import {
   Aperture, LayoutDashboard, FileText, PlusSquare,
-  Milestone, CreditCard, Bell, Settings, LogOut, User
+  Milestone, CreditCard, Bell, Settings, LogOut, User, ShieldCheck
 } from 'lucide-react';
 
 const navItems = [
   { href: '/dashboard',       icon: LayoutDashboard, label: 'Dashboard' },
-  { href: '/orders',          icon: FileText,        label: 'Orders' },
   { href: '/create-project',  icon: PlusSquare,      label: 'Create Project' },
+  { href: '/upload-invoice',  icon: FileText,        label: 'Submit Logs' },
   { href: '/milestones',      icon: Milestone,       label: 'Milestones' },
   { href: '/payments',        icon: CreditCard,      label: 'Payments' },
-  { href: '/notifications',   icon: Bell,            label: 'Notifications' },
+  { href: '/audit',           icon: ShieldCheck,     label: 'Audit Portal' },
 ];
 
 const bottomItems = [
   { href: '/profile',  icon: User,     label: 'Profile' },
-  { href: '/settings', icon: Settings, label: 'Settings' },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { role, logout } = useProcurement();
+
+  const visibleItems = navItems.filter(item => {
+    if (role === 'ADMIN') return true;
+    if (role === 'CONTRACTOR' && ['/dashboard', '/upload-invoice'].includes(item.href)) return true;
+    if (role === 'REGULATOR' && ['/dashboard', '/audit'].includes(item.href)) return true;
+    return false;
+  });
 
   const linkClass = (href: string) => {
     const isActive = pathname === href || pathname.startsWith(href + '/');
@@ -44,7 +52,7 @@ export function Sidebar() {
 
       {/* Main Nav */}
       <nav className="flex-1 w-full flex flex-col items-center space-y-2">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
           return (
@@ -73,8 +81,11 @@ export function Sidebar() {
             </Link>
           );
         })}
-        <button className="group relative p-3 text-gray-400 hover:text-white hover:bg-[#222225] rounded-2xl transition-colors" title="Log Out">
+        <button onClick={logout} className="group relative p-3 text-gray-400 hover:text-white hover:bg-[#222225] rounded-2xl transition-colors" title="Log Out / Switch Role">
           <LogOut size={22} />
+          <span className="absolute left-full ml-3 whitespace-nowrap text-xs bg-gray-800 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Logout
+          </span>
         </button>
       </div>
     </aside>

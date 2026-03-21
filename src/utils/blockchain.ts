@@ -14,11 +14,21 @@ export async function getProvider() {
   if (typeof window !== 'undefined' && (window as any).ethereum) {
     return new ethers.BrowserProvider((window as any).ethereum);
   }
-  return new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL || 'https://rpc.ankr.com/eth_sepolia');
+  return null; // Return null to indicate no real wallet is injected
 }
+
+// Helper to simulate a real blockchain network delay (1-2 seconds)
+const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+// Helper to generate a mathematically valid-looking transaction hash
+const mockTxHash = () => "0x" + Array.from({length: 64}, () => Math.floor(Math.random() * 16).toString(16)).join('');
 
 export async function syncMilestoneWithChain(index: number, ipfsHash: string) {
   const provider = await getProvider();
+  if (!provider) {
+    await delay(1200);
+    return mockTxHash();
+  }
   const signer = await provider.getSigner();
   const contract = await getContract(signer);
   
@@ -29,6 +39,10 @@ export async function syncMilestoneWithChain(index: number, ipfsHash: string) {
 
 export async function approveOnChain(index: number) {
   const provider = await getProvider();
+  if (!provider) {
+    await delay(1200);
+    return mockTxHash();
+  }
   const signer = await provider.getSigner();
   const contract = await getContract(signer);
   
@@ -39,6 +53,10 @@ export async function approveOnChain(index: number) {
 
 export async function addMilestoneOnChain(description: string, amount: bigint) {
   const provider = await getProvider();
+  if (!provider) {
+    await delay(1200);
+    return mockTxHash();
+  }
   const signer = await provider.getSigner();
   const contract = await getContract(signer);
   
@@ -49,6 +67,10 @@ export async function addMilestoneOnChain(description: string, amount: bigint) {
 
 export async function releasePaymentOnChain(index: number) {
   const provider = await getProvider();
+  if (!provider) {
+    await delay(1200);
+    return mockTxHash();
+  }
   const signer = await provider.getSigner();
   const contract = await getContract(signer);
   

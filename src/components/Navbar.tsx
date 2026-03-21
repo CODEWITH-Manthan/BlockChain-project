@@ -3,7 +3,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 
-
 export function Navbar() {
   return (
     <header className="bg-transparent h-20 flex items-center justify-between px-2 shrink-0 w-full mb-2">
@@ -18,8 +17,6 @@ export function Navbar() {
           />
         </div>
       </div>
-
-
     </header>
   );
 }

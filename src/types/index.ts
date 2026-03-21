@@ -3,9 +3,11 @@ export interface Project {
   name: string;
   budget: number;
   contractor: string;
+  documentHash?: string;
 }
 
 export type MilestoneStatus = 'Pending' | 'Approved' | 'Paid';
+export type UserRole = 'ADMIN' | 'CONTRACTOR' | 'REGULATOR' | null;
 
 export interface Milestone {
   id: string;
@@ -15,14 +17,26 @@ export interface Milestone {
   amount: number;
   status: MilestoneStatus;
   onChainIndex?: number;
+  invoiceHash?: string;
+  invoiceUploaded?: boolean;
 }
 
 export interface Invoice {
   id: string;
   projectId: string;
+  milestoneId: string;
   hash: string;
   amount: number;
   date: string;
+  fileName?: string;
+  type?: 'Invoice' | 'Receipt' | 'Certificate';
+}
+
+export interface ActionLog {
+  id: string;
+  message: string;
+  timestamp: string;
+  hash?: string;
 }
 
 export interface UserProfile {
