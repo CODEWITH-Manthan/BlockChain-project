@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Aphelion Cluster: Decentralized Procurement & Escrow System
 
-## Getting Started
+**Aphelion Cluster** is a blockchain-powered procurement and infrastructure management platform built to enforce absolute transparency, eliminate corruption, and guarantee automated fund disbursements for public and private sector projects.
 
-First, run the development server:
+## ⚠️ The Problem Statement
+
+In traditional government and large-scale corporate procurement:
+1. **Lack of Transparency**: Invoices, material receipts, and quality certificates are easily tampered with, backdated, or fabricated behind closed doors.
+2. **Delayed Payments**: Contractors suffer from massive delays waiting for bureaucratic approvals to release milestone funds.
+3. **Zero Accountability**: Auditors and public regulators lack a single, immutable source of truth to verify where allocated budgets actually went.
+
+## 💡 Our Solution
+
+We solve this using a **Decentralized Escrow Protocol** and **Immutable Content Hashing**:
+* **Smart Contract Escrow**: Project budgets are locked in a smart contract. Funds are physically inaccessible until specific project "Milestones" are cryptographically approved.
+* **Tamper-Proof Proof of Work**: Contractors upload supply chain receipts and invoices. Our system hashes these documents (SHA-256) and stores the hash directly on the blockchain ledger. If a file is ever altered, the hashes will instantly mismatch, proving tampering.
+* **Role-Based Access Control (RBAC)**: Distinct, isolated views ensuring no overlapping interference.
+
+## 👥 User Roles
+
+1. **ADMIN (Authority / Government Official)**
+   * Initializes infrastructure projects and locks the total budget into the smart contract.
+   * Reviews Contractor submissions and clicks a single button to cryptographically trigger the smart contract to release funds for a completed milestone.
+2. **CONTRACTOR (Service Provider / Vendor)**
+   * Manages on-site execution. Accesses the `/upload-invoice` portal to submit immutable proofs of delivery and tracks real-time progress of their pending payouts.
+3. **REGULATOR (Inspector / Auditor)**
+   * Read-Only oversight. Accesses the **Audit Portal** to transparently track macro budget allocations vs. actual spend, and verifies immutable material logs for complete accountability.
+
+## 🛠️ Technology Stack
+
+* **Frontend**: Next.js 16 (App Router), React, TailwindCSS, Lucide Icons.
+* **Authentication / Backend API**: Express.js, JSON Web Tokens (JWT), bcryptjs.
+* **Blockchain / Web3**: Solidity, Hardhat, Ethers.js.
+
+## 🚀 Getting Started
+
+Follow these steps to run the Aphelion Cluster locally:
+
+### 1. Install Dependencies
+```bash
+npm install
+```
+
+### 2. Run the Application
+We have configured `concurrently` to automatically run both the **Next.js Frontend** and the **Express Authentication Backend** at the same time.
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+* **Frontend UI**: [http://localhost:3000](http://localhost:3000)
+* **Backend API**: [http://localhost:5000](http://localhost:5000)
+
+### 3. Smart Contract Deployment (Optional)
+If you wish to compile and deploy the raw smart contracts to a local Ethereum node, navigate to the blockchain directory:
+```bash
+cd blockchain
+npm install
+npx hardhat compile
+npx hardhat run scripts/deploy.js --network localhost
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+*Built for Hackathon 2026 - Fighting Corruption through Code.*
