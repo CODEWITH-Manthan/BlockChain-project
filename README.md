@@ -61,4 +61,4 @@ npx hardhat run scripts/deploy.js --network localhost
 ```
 
 ---
-*Built for Hackathon 2026 - Fighting Corruption through Code.*
+
